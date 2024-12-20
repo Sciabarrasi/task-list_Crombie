@@ -1,43 +1,39 @@
-import React from "react";
+"use client"
 
-type Task = {
-    id: number; 
-    title: string;
-    userName: string;
-};
+import { useTaskContext } from "../context/TaskContext";
 
-type ShowTaskProps = {
-    tasks: Task[];
-    deleteTask: (id: number) => void;
-};
+export default function TaskList () {
+  const { tasks, removeTask } = useTaskContext();
 
-const ShowTask: React.FC<ShowTaskProps> = ({ tasks, deleteTask }) => {
-    return (
-        <div className="max-w-md mx-auto bg-white rounded-md shadow p-4 mt-6">
-          <h2 className="text-lg font-bold mb-4">Lista de Tareas</h2>
-          {tasks.length === 0 ? (
-            <p className="text-gray-500">No hay tareas aún.</p>
-          ) : (
-            tasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex justify-between items-center bg-gray-50 p-4 rounded-md mb-3 border"
-              >
-                <div>
-                  <p className="text-gray-800 font-medium">{task.title}</p>
-                  <p className="text-sm text-gray-600">Asignado a: {task.userName}</p>
-                </div>
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                >
-                  Eliminar
-                </button>
-              </div>
-            ))
-          )}
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+    removeTask(id)
+  };
+
+  console.log(tasks);
+
+  return ( 
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Lista de Tareas</h2>
+            <div className="space-y-4">
+                {tasks.map((task) => (
+                    <div
+                        key={task.id}
+                        className="flex items-center justify-between bg-gray-100 p-4 rounded-md shadow-sm"
+                    >
+                        <div>
+                            <p className="text-lg font-medium text-gray-800">{task.title}</p>
+                            <p className="text-sm text-gray-600">Asignado a: {task.user.name}</p>
+                        </div>
+                        <button
+                            onClick={() => handleDelete(task.id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200"
+                        >
+                            Eliminar
+                        </button>
+                    </div>
+                ))}
+            </div>
         </div>
-      );
+  );
 }
-
-export default ShowTask;
