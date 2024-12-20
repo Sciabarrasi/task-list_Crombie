@@ -1,7 +1,11 @@
 "use client"
 import React, { useEffect, useState } from "react"
 
-export default function FormTasks () {
+type FormTasksProps = {
+  addTask: (description: string, date: string, userId: string) => void;
+}
+
+export default function FormTasks({ addTask }: FormTasksProps) {
     const [formData, setFormData] = useState({
         description: "",
         date: "",
@@ -51,10 +55,15 @@ export default function FormTasks () {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),
           });
-          console.log(response)
     
           if (response.ok) {
             console.log("Tarea creada exitosamente");
+            addTask(formData.description, formData.date, formData.userId);
+            setFormData({
+              description: "",
+              date: "",
+              userId: "",
+            });
           } else {
             console.error("Error al crear la tarea");
           }
